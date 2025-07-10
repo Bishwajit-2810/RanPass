@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Password Generator</title>
+    <link rel="stylesheet" href="output.css" />
+    <style>
+      .tooltip {
+        position: relative;
+        cursor: pointer;
+      }
+      .tooltip::after {
+        content: attr(data-tooltip);
+        position: absolute;
+        bottom: 120%;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #374151;
+        color: #d1d5db;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+        white-space: nowrap;
+      }
+      .tooltip:hover::after {
+        opacity: 1;
+      }
+    </style>
+    <script>
+      function generatePassword(length, useNumbers, useSymbols) {
+        const letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        const numbers = "0123456789";
+        const symbols = "!@#$%^&*()-_=+[]{}|;:,.<>?";
+        let charset = letters;
+
+        if (useNumbers) charset += numbers;
+        if (useSymbols) charset += symbols;
+
+        let password = "";
+        for (let i = 0; i < length; i++) {
+          const randomIndex = Math.floor(Math.random() * charset.length);
+          password += charset[randomIndex];
+        }
+
+        return password;
+      }
+
+      function updatePasswords() {
+        const length = parseInt(document.getElementById("input-number").value);
+        const useNumbers = document.getElementById("include-numbers").checked;
+        const useSymbols = document.getElementById("include-symbols").checked;
+
+        const pass1 = generatePassword(length, useNumbers, useSymbols);
+        const pass2 = generatePassword(length, useNumbers, useSymbols);
+
+        document.getElementById("password-1").innerText = pass1;
+        document.getElementById("password-2").innerText = pass2;
+      }
+
+      function copyToClipboard(id) {
+        const text = document.getElementById(id).innerText;
+        navigator.clipboard.writeText(text).then(() => {
+          alert("Password copied to clipboard!");
+        });
+      }
+    </script>
+  </head>
+  <body class="flex flex-col min-h-screen bg-[#1f2937] text-white">
+    <!-- main body -->
+    <main class="flex-grow flex items-center justify-center p-6">
+      <div class="w-full max-w-md space-y-8">
+        <!-- Header -->
+        <div>
+          <h1 class="text-4xl font-bold leading-tight">
+            Generate a <br /><span class="text-[#4adf86]">random password</span>
+          </h1>
+          <p class="mt-2 text-lg text-[#d5d4d8]">
+            Never use an insecure password again.
+          </p>
+        </div>
+
+        <!-- options card -->
+        <div class="bg-[#111827] p-4 rounded-md shadow-md space-y-4">
+          <h2 class="text-lg font-semibold text-slate-300">Options</h2>
+          <div class="flex flex-wrap sm:justify-between items-center gap-4">
+            <div class="flex items-center">
+              <input
+                id="include-numbers"
+                type="checkbox"
+                class="w-4 h-4 text-green-500 rounded-sm focus:ring-green-500 bg-gray-700 border-gray-600 checked:bg-green-500"
+                checked
+              />
+              <label
+                for="include-numbers"
+                class="ml-2 text-sm font-medium text-slate-300"
+                >Numbers</label
+              >
+            </div>
+            <div class="flex items-center">
+              <input
+                id="include-symbols"
+                type="checkbox"
+                class="w-4 h-4 text-green-500 rounded-sm focus:ring-green-500 bg-gray-700 border-gray-600 checked:bg-green-500"
+                checked
+              />
+              <label
+                for="include-symbols"
+                class="ml-2 text-sm font-medium text-slate-300"
+                >Symbols</label
+              >
+            </div>
+            <div class="flex items-center w-full sm:w-auto gap-2">
+              <label
+                for="input-number"
+                class="text-sm font-medium text-slate-300 whitespace-nowrap"
+                >Length</label
+              >
+              <div class="relative w-full sm:w-32">
+                <select
+                  id="input-number"
+                  class="w-full bg-[#374151] text-slate-100 text-sm border border-slate-600 rounded-md px-3 py-2 focus:outline-none focus:border-green-500 hover:border-slate-400 appearance-none shadow-sm"
+                >
+                  <option value="6">6</option>
+                  <option value="8">8</option>
+                  <option value="10" selected>10</option>
+                  <option value="12">12</option>
+                  <option value="14">14</option>
+                  <option value="16">16</option>
+                </select>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.2"
+                  stroke="currentColor"
+                  class="h-5 w-5 absolute top-2.5 right-3 text-slate-300 pointer-events-none"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- generate button -->
+        <div>
+          <button
+            type="button"
+            onclick="updatePasswords()"
+            class="bg-[#10b981] hover:bg-[#168365] text-white font-semibold rounded-md text-sm px-4 py-2 transition duration-200"
+          >
+            Generate Password
+          </button>
+        </div>
+
+        <!-- generated output -->
+        <div class="space-y-3">
+          <hr class="h-px my-4 bg-gray-200 border-0 dark:bg-gray-700" />
+          <h2 class="text-md font-semibold text-slate-300">
+            Generated Password
+          </h2>
+          <div class="flex flex-col gap-2 sm:flex-row sm:justify-between">
+            <div
+              id="password-1"
+              onclick="copyToClipboard('password-1')"
+              class="tooltip bg-[#273549] p-2 rounded-md text-[#4adf86] font-mono text-sm text-center w-full"
+              data-tooltip="Click to copy"
+            >
+              ••••••••
+            </div>
+            <div
+              id="password-2"
+              onclick="copyToClipboard('password-2')"
+              class="tooltip bg-[#273549] p-2 rounded-md text-[#4adf86] font-mono text-sm text-center w-full"
+              data-tooltip="Click to copy"
+            >
+              ••••••••
+            </div>
+          </div>
+
+          <!-- pepper warning -->
+
+          <p
+            class="p rounded-md text-red-600 font-mono text-sm text-center w-full"
+          >
+            **please use pepper with the generated password**
+          </p>
+        </div>
+      </div>
+    </main>
+
+    <!-- details footer -->
+    <footer class="border-t border-gray-700 pt-6 pb-6 px-4">
+      <div class="max-w-md mx-auto text-center space-y-3 text-sm text-gray-400">
+        <div class="flex justify-center space-x-4">
+          <!-- GitHub -->
+          <a
+            href="https://github.com/Bishwajit-2810"
+            target="_blank"
+            class="hover:text-white transition"
+            aria-label="GitHub"
+          >
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <path
+                d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.387.6.113.82-.26.82-.577v-2.04c-3.338.724-4.033-1.61-4.033-1.61-.546-1.387-1.333-1.756-1.333-1.756-1.09-.745.082-.73.082-.73 1.205.084 1.84 1.237 1.84 1.237 1.07 1.834 2.807 1.304 3.492.997.108-.776.42-1.305.762-1.605-2.665-.3-5.466-1.334-5.466-5.93 0-1.31.467-2.38 1.235-3.22-.124-.302-.535-1.52.117-3.17 0 0 1.008-.322 3.3 1.23.96-.267 1.98-.4 3-.404 1.02.004 2.04.137 3 .403 2.29-1.552 3.296-1.23 3.296-1.23.653 1.65.242 2.867.12 3.17.77.84 1.233 1.91 1.233 3.22 0 4.61-2.804 5.625-5.475 5.92.432.372.816 1.102.816 2.222v3.293c0 .32.216.694.825.576C20.565 21.797 24 17.298 24 12c0-6.63-5.37-12-12-12z"
+              />
+            </svg>
+          </a>
+
+          <!-- LinkedIn -->
+          <a
+            href="https://www.linkedin.com/in/bishwajit-chakraborty/"
+            target="_blank"
+            class="hover:text-white transition"
+            aria-label="LinkedIn"
+          >
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <path
+                d="M4.98 3.5C3.88 3.5 3 4.38 3 5.48c0 1.09.88 1.97 1.98 1.97h.02c1.09 0 1.98-.88 1.98-1.98C6.98 4.38 6.09 3.5 4.98 3.5zM3.5 8.98h2.95V21H3.5V8.98zM9.55 8.98h2.82v1.63h.04c.39-.73 1.33-1.5 2.73-1.5 2.92 0 3.46 1.92 3.46 4.41V21h-2.95v-5.86c0-1.4-.03-3.2-1.95-3.2-1.95 0-2.25 1.52-2.25 3.09V21h-2.9V8.98z"
+              />
+            </svg>
+          </a>
+
+          <!-- Email -->
+          <a
+            href="mailto:bishwajit2810@gmail.com"
+            class="hover:text-white transition"
+            aria-label="Email"
+          >
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <path
+                d="M2.01 5.6c.01-.79.63-1.42 1.42-1.42h17.14c.79 0 1.41.63 1.42 1.41v.09l-10 6.3-10-6.3v-.08zM2 8.24v10.16c0 .79.63 1.42 1.42 1.42h17.17c.79 0 1.41-.63 1.41-1.42V8.24l-9.6 6.04c-.26.16-.59.16-.85 0L2 8.24z"
+              />
+            </svg>
+          </a>
+        </div>
+        <div>
+          © 2025 <span class="text-[#4adf86] font-semibold">RanPass</span>.
+          Designed by <span class="text-white font-semibold">Unknown</span>.
+          Built by <span class="text-[#4adf86] font-semibold">Bishwajit</span>.
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
